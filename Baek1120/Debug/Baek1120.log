@@ -1,0 +1,5 @@
+﻿  Solution.cpp
+c:\users\dongp\desktop\algorithm_cpp\consoleapplication1\baek1120\solution.cpp(10): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+c:\users\dongp\desktop\algorithm_cpp\consoleapplication1\baek1120\solution.cpp(12): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  Baek1120.vcxproj -> C:\Users\dongp\Desktop\algorithm_cpp\ConsoleApplication1\Debug\Baek1120.exe
+  Baek1120.vcxproj -> C:\Users\dongp\Desktop\algorithm_cpp\ConsoleApplication1\Debug\Baek1120.pdb (Full PDB)
