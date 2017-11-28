@@ -1,34 +1,13 @@
 package week_19th_mon;
 
 import java.util.*;
-public class swExpert_2383 {
-
-	/*
-	방안의 사람 p 계단 입구 s
-	pr,pc 는 p의 세로, 가로 위치
-	sr,sc 는 s의 세로, 가로 위치 
-	이동시간 : |pr - sr| + |pc - sc|
-	 
-	계단을 내려가는 시간
-	- 계단 입구에 도착한 후부터 계단을 완전히 내려갈 때까지의 시간
-	- 계단 입구에 도착하면 1초 후 아래칸으로 내려갈 수 있다
-	- 계단 위에는 동시에 최대 3명까지만 올라가 있을 수 있다.
-	- 이미 3명이 내려가고 있는 경우, 그중 한명이 완전히 내려갈때까지 입구에서 대기
-	- 계단마다 길이k가 주어지며, 계단에 올라간 후 완전히 내려가는데 k초가 걸린다
-	
-	
-	제약사항:
-	4<=n<=10
-	1<=k<=10
-	계단 입구는 2개  2<=length<=10
-	 * */
-	static int n,k,num=0,ans=0;
+public class swExpert_2383_fix5 {
+	static int n,k,num=0,ans=987654321;
 	static int[][] a;
 	static int[] dx = {-1,1,0,0}, dy = {0,0,-1,1};
 	static Hole[] hole;
 	static List<Person> person;
 	static List<String> all;
-//	static Queue<Person> q;
 	public static void all(String now){
 		if(now.length()==num){
 			all.add(now);
@@ -42,6 +21,7 @@ public class swExpert_2383 {
 		List<Person> first;
 		List<Person> second;
 		for(String t : all){
+//			System.out.println("\n현재 : " + t);
 			first = new ArrayList<>();
 			second = new ArrayList<>();
 			//1번 구멍인지 2번구멍인지 그리고 구멍으로 이동한 후에 
@@ -63,97 +43,161 @@ public class swExpert_2383 {
 			}
 			Collections.sort(first);
 			Collections.sort(second);
-			System.out.println(first.size());
 			//현재 1번 구멍으로 이동한 애들은 fisrt에 담겨져 있고
 			//2번째로 이동한 애들은 second에 담겨있다
+			Deque<Person> q = new ArrayDeque<>();	//입구에 대기중인 애들
+			Deque<Person> move = new ArrayDeque<>();//계단에 올라온 애들
+			int index = 0, cnt = 0;
+			int time1 = 0;
 			
-			int time1 = first.get(0).time+1;
-			int index = 0;
-			int cnt1 = 0;
-			Deque<Person> q = new ArrayDeque<>();
-			while(true){
-				System.out.println("현재 시간 : " + time1);
-				//처리할 애가 없는 경우
-				if(first.size()==0) break;
-					
-				//있는 인원만큼 구멍에 최대 3명 집어넣기
-				if(hole[0].cnt<3 && index<first.size())
+			if(first.size()!=0){
+				time1 = first.get(0).time;	//첫번 째 친구가 입구에 도착
+				finish:
+				while(true){
+					//도착한 애들은 입구에 대기 시켜줌
 					while(true){
-						if(first.get(index).time>time1) break;
-						System.out.println(index+"번째 애가 계단을 내려가기 시작");
-						Person tt = first.get(index++);
-						tt.length = 0;
-						q.addLast(tt);
-						++hole[0].cnt;
-						if(hole[0].cnt==3) break;
-						if(index==first.size()) break;
+						if(index>=first.size()) break;
+						Person temp = first.get(index);
+						if(temp.time>time1) break;
+						temp.length = -1; //입구에 대기중 -1 로 만들기
+						q.addLast(temp);
+						++index;
+						temp.index = index;
+//						System.out.println(index+"애가 입구에 도착함");
 					}
-				
-				if(q.isEmpty()) break; //더이상 처리할 게 없으면 끝내기
-				
-				//계단 내려가는 수만큼 더해주기
-				for(int i=0; i<q.size(); i++){
-					Person te = q.removeFirst();
-					te.length++;
-					if(te.length == hole[0].cnt){
-						++cnt1;
-						System.out.println(cnt1+"명이 계단을 내려감");
-						continue;
+						
+					//입구에 도착한 애들 중에서 움직일 애들을 만들어줌
+					while(hole[0].cnt<3){
+						if(q.isEmpty()) break;//이동시킬 친구 없으면 나가기
+//						System.out.println(q.getFirst().index+"번째가 내려가기 시작");
+						move.addLast(q.removeFirst());
 					}
-					q.addLast(te);
+					
+					for(int i=0; i<move.size(); i++){
+						Person temp = move.removeFirst();
+						++temp.length;
+						if(temp.length == hole[0].length){
+							++cnt;
+							if(cnt==first.size()) break finish;
+							--hole[0].cnt;
+							if(q.isEmpty()) continue;
+							//만약에 입구에 대기중인 친구가 있다면 내려가기 시작으로 바꿔줌 ->0
+							Person next = q.remove();
+							next.length = 0;
+							if(next.time ==time1) next.length = -1;
+							move.add(next);
+							++hole[0].cnt;
+							continue;
+						}
+						move.addLast(temp);
+					}
+					++time1;
 				}
-				
-				++time1;
 			}
-			System.out.println(time1);
+			q.clear(); move.clear();
+			index = cnt = 0;
+			int time2 = 0;
+			
+			if(second.size()!=0){
+				time2 = second.get(0).time;	//첫번 째 친구가 입구에 도착
+				finish:
+				while(true){
+					//도착한 애들은 입구에 대기 시켜줌
+					while(true){
+						if(index>=second.size()) break;
+						Person temp = second.get(index);
+						if(temp.time>time2) break;
+						temp.length = -1; //입구에 대기중 -1 로 만들기
+						q.addLast(temp);
+						++index;
+						temp.index = index;
+//							System.out.println(index+"애가 입구에 도착함");
+					}
+						
+					//입구에 도착한 애들 중에서 움직일 애들을 만들어줌
+					while(hole[1].cnt<3){
+						if(q.isEmpty()) break;//이동시킬 친구 없으면 나가기
+//							System.out.println(q.getFirst().index+"번째가 내려가기 시작");
+						move.addLast(q.removeFirst());
+					}
+					
+					for(int i=0; i<move.size(); i++){
+						Person temp = move.removeFirst();
+						++temp.length;
+						if(temp.length == hole[1].length){
+							++cnt;
+							if(cnt==second.size()) break finish;
+							--hole[0].cnt;
+							if(q.isEmpty()) continue;
+							//만약에 입구에 대기중인 친구가 있다면 내려가기 시작으로 바꿔줌 ->0
+							Person next = q.remove();
+							next.length = 0;
+							if(next.time ==time2) next.length = -1;
+							next.length = 0;
+							move.add(next);
+							++hole[1].cnt;
+							continue;
+						}
+						move.addLast(temp);
+					}
+					++time2;
+				}
+			}
+			
+			int temp = Math.max(time1, time2);
+//			System.out.println(time1 + " " + time2);
+			ans = Math.min(ans, temp);
+			
 		}
 	}
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
-		/*int tc = in.nextInt();
+		int tc = in.nextInt();
 		for(int t=1; t<=tc; t++){
-			System.out.println("#"+t+" ");
-		}*/
-		
-		n = in.nextInt();
-		a = new int[n][n];
-		hole = new Hole[2];
-		person = new ArrayList<>();
-		all = new ArrayList<>();
-		int index = 0;
-		for(int i=0; i<n; i++)
-			for(int j=0; j<n; j++){
-				a[i][j] = in.nextInt();
-				if(a[i][j]==1) {
-					++num;
-					person.add(new Person(i,j));
+			n = in.nextInt();
+			a = new int[n][n];
+			hole = new Hole[2];
+			person = new ArrayList<>();
+			all = new ArrayList<>();
+			num = 0;
+			ans = 987654321;
+			int index = 0;
+			for(int i=0; i<n; i++)
+				for(int j=0; j<n; j++){
+					a[i][j] = in.nextInt();
+					if(a[i][j]==1) {
+						++num;
+						person.add(new Person(i,j));
+					}
+					if(a[i][j]!=0 && a[i][j]!=1)
+						hole[index++] = new Hole(i,j,a[i][j]);
 				}
-				if(a[i][j]!=0 && a[i][j]!=1)
-					hole[index++] = new Hole(i,j,a[i][j]);
-			}
-		
-		all.add("111111");
-		go();
+			
+			all("");
+//			all.add("111111");
+//			all.add("111112");
+			go();
+			System.out.println("#"+t+" "+ans);
+		}
 		
 		in.close();
 	}
 	public static class Hole{
-		int x, y, length, cnt, finish;
-		List<Person> per;
+		int x, y, length, cnt;
 		public Hole(int x, int y, int length){
 			this.x = x;
 			this.y = y;
 			this.length = length;
-			cnt = finish = 0;
-			per = new ArrayList<>();
+			cnt = 0;
 		}
 	}
 	public static class Person implements Comparable<Person>{
-		int x, y, time, length, hole;
+		int x, y, time, length, hole, index;
 		public Person(int x, int y){
 			this.x = x;
 			this.y = y;
-			length = hole = -10;
+			length = -1;
+			hole = -10;
 		}
 		@Override
 		public int compareTo(Person o) {

@@ -1,9 +1,8 @@
 package week_19th_mon;
 
 import java.util.*;
-public class swExpert1868 {
-
-	static int n,ans=0,cnt;
+public class swExpert1868_fix3 {
+	static int n,ans,cnt;
 	static int[][] a;
 	static int[] dx = {-1, 0, 1,-1, 1,-1, 0, 1};
 	static int[] dy = {-1,-1,-1, 0, 0, 1, 1, 1};
@@ -13,92 +12,37 @@ public class swExpert1868 {
 			int nx = x + dx[i];
 			int ny = y + dy[i];
 			if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
-			if(a[nx][ny]==-10) return false;
+			if(a[nx][ny]==-1) return false;
 		}
 		return true;
 	}
 	public static void findZero(){
 		for(int i=0; i<n; i++){
 			for(int j=0; j<n; j++){
-				if(a[i][j]==-10) continue;
+				if(a[i][j]==-1) continue;
 				if(zero(i,j)) z.add(new Point(i,j));
 			}
 		}
 	}
 	public static void go(){
-		boolean first = true;
-		Queue<Point> q = new LinkedList<>();
-		int all = 0;
+		ans = z.size();
 		while(!z.isEmpty()){
-			int size = z.size();
-			for(int k=0; k<size; k++){
-				Point now = z.remove();
-				int x = now.x;
-				int y = now.y;
-				if(a[x][y]==0 && first) {
-					--ans;
-					--all;
-				}
-				
-				int total=0;
-				for(int i=0; i<8; i++){
-					int nx = x + dx[i];
-					int ny = y + dy[i];
-					
-					if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
-					if(a[nx][ny]==-10) ++total;
-				}
-				a[x][y] = total;
-				++all;
-				if(total==0){
-					for(int i=0; i<8; i++){
-						int nx = x + dx[i];
-						int ny = y + dy[i];
-						if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
-						if(a[nx][ny]==-10 || a[nx][ny]!=-1) continue;
-						q.add(new Point(nx,ny));
-					}
-				}
-				while(!q.isEmpty()){
-					Point next = q.remove();
-					int x1 = next.x;
-					int y1 = next.y;
-					total = 0;
-					for(int i=0; i<8; i++){
-						int nx = x1 + dx[i];
-						int ny = y1 + dy[i];
-						if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
-						if(a[nx][ny]==-10) ++total;
-					}
-					a[x1][y1] = total;
-					++all;
-					if(total==0){
-						for(int i=0; i<8; i++){
-							int nx = x1 + dx[i];
-							int ny = y1 + dy[i];
-							if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
-							if(a[nx][ny]==-10 || a[nx][ny]!=-1) continue;
-							q.add(new Point(nx,ny));
-						}
-					}
-				}
-				if(first) ++ans;
+			Point now = z.remove();
+			int x = now.x;
+			int y = now.y;
+			if(a[x][y]==1) --ans;
+			a[x][y] = 1;
+			for(int i=0; i<8; i++){
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				if(nx<0 || nx>=n || ny<0 || ny>=n) continue;
+				if(a[nx][ny]==-1) continue;
+				a[nx][ny] = 1;
 			}
-			first = false;
 		}
-		
-		all = n*n - cnt - all;
-		ans += all;
-		
-	}
-	public static void print(){
-		for(int i=0; i<n;i++){
-			for(int j=0; j<n; j++){
-				System.out.printf("%4d",a[i][j]);
-			}
-			System.out.println();
-		}
-		System.out.println();
+		for(int i=0; i<n; i++)
+			for(int j=0; j<n; j++)
+				if(a[i][j]==0) ++ans;
 	}
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
@@ -111,10 +55,9 @@ public class swExpert1868 {
 				String s = in.next();
 				for(int j=0; j<n; j++){
 					if(s.charAt(j)=='*') {
-						a[i][j] = -10;
 						++cnt;
+						a[i][j] = -1;
 					}
-					else a[i][j] = -1;
 				}
 			}
 			findZero();

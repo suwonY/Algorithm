@@ -1,59 +1,66 @@
 package week_12th_mon;
 
 import java.util.*;
-public class Baek2666 {
+public class Baek2666_fix2 {
 	/*벽장문의 이동
 	 * 
-	 * 벽장문이 열려있으면 이웃한 벽장의 문을 자신에게 옮길 수 있다
-	 * 이용하고 싶은 벽장이 주어졌을 때 최소횟수를 움직여 벽장을 이용할 방법을 찾기
-	 * 
-	 * d[n]을 n을 사용하기 위한 최소 이동횟수라고 하자
-	 * d[n]은
-	 * 열려있으면 0
-	 * if(open[n]) d[n]=0;
-	 * 열려있지 않다면
-	 * n-i, n+i중 최소값을 구한다 
-	 * n-i가 0보다 클때까지 n+i<
-	 * 
+	 반례가 생기는데
+	 문이 3개다
+	 1,2 가 열려있는상태에서
+	 3 2 3 순서대로 사용하고 싶을 때
+	 왼쪽꺼를 해주냐 오른쪽꺼를 옮겨주냐에 따라 2,3 결과가 나온다
+	 
+	 그럼 문을
+	 왼쪽에서 옮기거나 오른쪽에서 옮기고 계산한 것 중에서 최소값을 만들어야 된다.
+	 
+	 d[n]
+	 a[n][0] 은 왼쪽에서 땡겨와서 n이 열리게 할 때 최소값
+	 a[n][1] 은 오른쪽에서 땡겨와서 n이 열리게 하는 최소값
+	 d[n] = a[n][0] 과 a[n][1]의 min값이 된다
+	 
 	 * */
-	static int n; //벽장은 3<=n<=20
+	static int n, ans = 987654321; //벽장은 3<=n<=20
 	static int k; //이용할 벽장의 개수
-	static boolean[] open = new boolean[21]; //열려있는 벽장 - 열려있으면 true
-	static List<Integer> a = new ArrayList<>();
+	static int[] open = new int[2];
+	static List<Integer> arr = new ArrayList<>();
+	public static void go(int l, int r, int cnt, int total){
+		if(cnt==k){
+			ans = Math.min(total, ans);
+			return;
+		}
+		int num = arr.get(cnt);
+		//왼쪽꺼를 땡겨다 쓸 경우
+		if(l==num) 
+			go(l,r,cnt+1,total);
+		
+		else if(l!=num)
+			go(num,r,cnt+1,total + Math.abs(num-l));
+		
+		//오른쪽꺼를 땡겨다 쓸 경우
+		if(r==num)
+			go(l,r,cnt+1,total);
+		
+		else if(r!=num)
+			go(l,num,cnt+1,total+Math.abs(num-r));
+		
+	}
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		n = in.nextInt();
-		for(int i=0; i<2; i++)
-			open[in.nextInt()]=true;
+		for(int i=0; i<2; i++){
+			int o = in.nextInt();
+			open[i] = o;
+		}
+		
+		Arrays.sort(open);
 		
 		k = in.nextInt();
 		for(int i=0; i<k; i++)
-			a.add(in.nextInt());
+			arr.add(in.nextInt());
 		
-		int ans = 0;
-		for(int i : a){
-			//열려있으면 바로 쓰면된다.
-			if(open[i]) continue;
-			//열려있지 않다면
-			for(int j=0; j<a.size(); j++){
-				//왼쪽께 열려있거나
-				if(i-j>0 && open[i-j]){
-					ans += j;
-					//i-j를 close 해주고 i를 open해준다
-					open[i-j]=false;
-					open[i]=true;
-					break;
-				}
-				//오른쪽꺼가 열려있거나
-				else if(i+j<=n && open[i+j]){
-					ans += j;
-					open[i+j]=false;
-					open[i]=true;
-					break;
-				}
-			}
-		}
+		go(open[0],open[1],0,0);
 		System.out.println(ans);
+		
 		in.close();
 	}
 }

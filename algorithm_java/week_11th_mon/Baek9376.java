@@ -1,8 +1,6 @@
 package week_11th_mon;
-
 import java.util.*;
-public class Baek9376 {
-
+public class Baek9376_fix {
 	/*Å»¿Á
 	 * 
 	 * µÎ¸íÀÇ ÁË¼ö¸¦ Å»¿Á½ÃÄÑ¾ß µÈ´Ù $Ç¥½Ã

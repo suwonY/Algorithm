@@ -1,14 +1,51 @@
 package week_17th_thu;
-
 import java.util.*;
-public class swExpert2115 {
-
+public class swExpert2115_fix1 {
 	static int n,m,max;
 	static long ans;
 	static int[][] a;
 	static boolean[][] c1;
 	static boolean[][] c2;
 	static int dx = 0, dy = 1;
+	public static boolean next_permutation(int[] a) {
+        int i = a.length-1;
+        while (i > 0 && a[i-1] >= a[i])  i -= 1;
+        if (i <= 0)  return false;
+        int j = a.length-1;
+        while (a[j] <= a[i-1])  j -= 1;
+        int temp = a[i-1];
+        a[i-1] = a[j];
+        a[j] = temp;
+        j = a.length-1;
+        while (i < j) {
+            temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+            i += 1;
+            j -= 1;
+        }
+        return true;
+    }
+	public static long getMax(int[] w){
+		int len1 = w.length;
+		long ans = 0;
+		do{
+			long temp = 0;
+			int index = 0;
+			for(int i=0; i<len1; i++){
+				if(temp+w[i]>max) break;
+				temp+=w[i];
+				++index;
+			}
+			temp = 0;
+			for(int i=0; i<index; i++)
+				temp += (w[i]*w[i]);
+			ans = Math.max(temp, ans);
+		}
+		while(next_permutation(w));
+		
+		return ans;
+	}
 	public static void go(){
 		int[] w1 = new int[m];
 		int[] w2 = new int[m];
@@ -21,13 +58,10 @@ public class swExpert2115 {
 //				System.out.println("1번이 : " + i + "," + j + "일 때");
 				w1 = new int[m];
 				c1[i][j] = true;
-				int temp1 = a[i][j];
-				if(temp1<=max) w1[0]=a[i][j];
 
-				for(int t=1, index=1; t<m; t++){
-					temp1 += a[i][j+t];
+				for(int t=0; t<m; t++){
 					c1[i][j+t] = true;
-					if(temp1<=max) w1[index++]=a[i][j+t];
+					w1[t]=a[i][j+t];
 				}
 				
 				//2번을 돌면서 확인
@@ -44,49 +78,17 @@ public class swExpert2115 {
 						}
 						if(im) continue;
 						w2 = new int[m];
-
 //						System.out.println("2번이 : " + k + "," + l + "일 때");
-						int temp2 = a[k][l];
-						if(temp2<=max) w2[0]=a[k][l];
-
-						for(int t=1, index=1; t<m; t++){
-							temp2 += a[k][l+t];
-							if(temp2<=max) w2[index++]=a[k][l+t];
-						}
-						
-						long cnt = 0;
-						for(int t=0; t<m; t++){
-							cnt += (w1[t]*w1[t]);
-							cnt += (w2[t]*w2[t]);
-						}
-//						for(int s=0; s<m; s++){
-//							System.out.print(w1[s]+" ");
-//						}
-//						System.out.println();
-//						for(int s=0; s<m; s++){
-//							System.out.print(w2[s]+" ");
-//						}
-//						System.out.println();
-//						System.out.println(cnt);
-						ans = Math.max(cnt, ans);
+						for(int t=0; t<m; t++) w2[t]=a[k][l+t];
+						long num1 = getMax(w1);
+						long num2 = getMax(w2);
+//						System.out.println(num1+num2);
+						ans = Math.max(ans, num1+num2);
 						c2 = new boolean[n][n];
 					}
 				}
-//				c1 = new boolean[n][n];
 			}
 		}
-		
-//		System.out.println("마지막 ");
-//		for(int s=0; s<m; s++){
-//			System.out.print(w1[s]+" ");
-//		}
-//		System.out.println();
-//		for(int s=0; s<m; s++){
-//			System.out.print(w2[s]+" ");
-//		}
-//		System.out.println();
-//		System.out.println(ans);
-		
 	}
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
@@ -101,7 +103,6 @@ public class swExpert2115 {
 				for(int j=0; j<n; j++)
 					a[i][j] = in.nextInt();
 			go();
-			
 			System.out.println("#"+t+" "+ans);
 		}
 		in.close();

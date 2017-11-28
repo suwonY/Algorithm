@@ -1,7 +1,8 @@
 package week_11th_mon;
 
 import java.util.*;
-public class Baek1194 {
+public class Baek1194_fix {
+
 	/*달이 차오른다
 	 * 
 	 * n,m
@@ -18,7 +19,10 @@ public class Baek1194 {
 	static boolean[][][] c = new boolean[51][51][1<<7];
 	static boolean[] key = new boolean[6];
 	static Point start = null;
-	public static void go(){
+	static List<Point> end = new ArrayList<>();
+	public static void go(Point end){
+		int ex = end.x;
+		int ey = end.y;
 		Queue<Point> q = new LinkedList<>();
 		q.add(start);
 		c[start.x][start.y][start.key]=true;
@@ -36,7 +40,7 @@ public class Baek1194 {
 				if(a[nx][ny]=='#') continue;//벽 거르기
 				if(c[nx][ny][key]) continue;//해당 키를 가지고 방문한적 거르기
 				
-				if(a[nx][ny]=='1'){
+				if(a[nx][ny]==a[ex][ey]){
 					ans = Math.min(ans, cnt+1);
 				}
 				else if('A'<=a[nx][ny] && a[nx][ny]<='F'){
@@ -74,12 +78,13 @@ public class Baek1194 {
 				a[i][j]=temp.charAt(j);
 				if(a[i][j]=='0')
 					start = new Point(i,j,0,0);
+				else if(a[i][j]=='1')
+					end.add(new Point(i,j,0,0));
 			}
 		}
-		go();
+		for(Point e : end) go(e);
 		
-		if(ans==987654321) System.out.println(-1);
-		else System.out.println(ans);
+		System.out.println(ans);
 		in.close();
 	}
 	public static class Point{

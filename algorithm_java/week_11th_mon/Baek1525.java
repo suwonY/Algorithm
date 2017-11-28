@@ -1,85 +1,71 @@
 package week_11th_mon;
 
 import java.util.*;
-public class Baek1525 {
+public class Baek1525_fix4 {
 
-	static int[][] c = new int[4][4];
-	static int[][] a = new int[4][4];
-	static boolean[][] check = new boolean[4][4];
-	static int[] dx = {-1,1,0,0};
-	static int[] dy = {0,0,-1,1};
-	static int zx,zy,ans=987654321;
-	public static boolean finish(int[][] a){
-		for(int i=1; i<=3; i++){
-			for(int j=1; j<=3; j++){
-				if(i==3 && j==3) continue;
-				if(a[i][j]!=c[i][j])
-					return false;
-			}
-		}
-		return true;
+	static int[] m = {-3,3,-1,1};
+	static int[] dx = { -1, 1, 0, 0 }, dy = { 0, 0, -1, 1 };
+	static int ans = 987654321;
+	static String start = "", end = "123456780";
+	static List<String> c = new ArrayList<>();
+	public static String swap(String str, int i, int j) { 
+		char[] ch = str.toCharArray();
+		char temp = ch[i];
+		ch[i] = ch[j];
+		ch[j] = temp;
+		return String.copyValueOf(ch);
 	}
-	public static void go(int x, int y, int cnt, int[][] a){
-		if(finish(a)){
-			ans = Math.min(cnt, ans);
-			return;
-		}
-		
-		int[][] temp = new int[4][4];
-		for(int i=1; i<=3; i++){
-			for(int j=1; j<=3; j++){
-				temp[i][j] = a[i][j];
-			}
-		}
-		
-		System.out.println("cnt: "+cnt);
-		for(int i=1; i<=3; i++){
-			for(int j=1; j<=3; j++){
-				System.out.print(a[i][j]+" ");
-			}
-			System.out.println();
-		}
-		System.out.println();
-		
-		for(int k=0; k<4; k++){
-			int nx = x + dx[k];
-			int ny = y + dy[k];
-			if(nx<1 || nx>3 || ny<1 || ny>3) continue;
-			if(check[nx][ny]) continue;//0이 있었던 곳으로 또가면 무한루프 도니깐 제외
-			
-			//두개를 스왑 (0은 x,y -> nx,ny로 옮겨짐)
-			int n = a[nx][ny];
-			a[nx][ny] = a[x][y];
-			a[x][y] = n;
-			check[nx][ny] = true;
-			go(nx,ny,cnt+1,a);
-
-			//다시 원래대로 돌려주기
-			n = a[nx][ny];
-			a[nx][ny] = a[x][y];
-			a[x][y] = n;
-			check[nx][ny] = false;
-		}
+	public static boolean find(String str){
+		for(String t : c)
+			if(t.equals(str)) return true;
+		return false;
 	}
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
+		for(int i=0; i<9; i++) start += in.nextInt();
+		Queue<Node> q = new LinkedList<>();
+		q.add(new Node(start, 0));
+		c.add(start);
 		
-		int k=1;
-		for(int i=1; i<=3; i++){
-			for(int j=1; j<=3; j++){
-				a[i][j] = in.nextInt();
-				c[i][j]=(k++);
-				if(a[i][j]==0){
-					zx=i;
-					zy=j;
-					check[i][j] = true;
-				}
+		while(!q.isEmpty()){
+			Node t = q.remove();
+			String now = t.str;
+			int cnt = t.cnt;
+			
+			if(now.equals(end)){
+				System.out.println("들어온적이 있음");
+				ans = Math.min(ans, cnt);
+			}
+			
+			int pos = 0;
+			pos = now.indexOf('0');
+			int x = pos/3;
+			int y = pos%3;
+			
+			for(int k=0; k<4; k++){
+				int nx = x + dx[k];
+				int ny = y + dy[k];
+				
+				if(nx<0 || nx>=3 || ny<0 || ny>=3) continue;
+				String next = now;
+				swap(next,pos,pos+m[k]);
+				
+				if(find(next)) continue;
+				
+				q.add(new Node(next,cnt+1));
+				c.add(next);
 			}
 		}
-		go(zx,zy,0,a);
-		if(ans==987654321) System.out.println(-1);
-		else System.out.println(ans);
 		
+		System.out.println(ans);
 		in.close();
+	}
+	public static class Node {
+		String str;
+		int cnt;
+		public Node(String str,  int cnt) {
+			this.str = str;
+			this.cnt = cnt;
+		}
 	}
 }

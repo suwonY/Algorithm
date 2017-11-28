@@ -1,7 +1,7 @@
 package week_13th_mon;
 
 import java.util.*;
-public class co_mt {
+public class co_mt_fix2 {
 
 	/*mt게임
 	 * 
@@ -22,17 +22,38 @@ public class co_mt {
 				n = in.nextInt();
 				k = in.nextInt();
 				
+				int a,b;
+				int minA = x*1;
+				int maxA = x*k;
+				int minB = y*1;
+				int maxB = y*k;
+				
+				int temp = n - minB;
+				
 				while(true){
-					n -=  y*(k+x);
-					if(n<0){
-						n += y*(k+1);
+					temp = temp - maxA + 1;
+					temp = temp - minB;
+					if(temp<=maxA){
+						a = temp;
 						break;
 					}
+					temp = temp - maxA + 1;
 				}
-				System.out.println("부르면 지는 숫자 : " + n);
-				if(n!=x)
+				
+				temp = n - minA;
+				while(true){
+					temp = temp - maxB + 1;
+					temp = temp - minA;
+					if(temp<=maxB){
+						b = temp;
+						break;
+					}
+					temp = temp - maxB + 1;
+				}
+				
+				if(a<b)
 					ans+='a';
-				else if(n==x)
+				else
 					ans+='b';
 			}
 			System.out.println("Case #"+t);
