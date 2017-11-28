@@ -1,5 +1,0 @@
-﻿  Solution.cpp
-c:\users\dongp\desktop\algorithm_cpp\consoleapplication1\baek6593\solution.cpp(18): warning C4305: '초기화 중': '__int64'에서 'int'(으)로 잘립니다.
-c:\users\dongp\desktop\algorithm_cpp\consoleapplication1\baek6593\solution.cpp(18): warning C4309: '초기화 중': 상수 값이 잘립니다.
-  Baek6593.vcxproj -> C:\Users\dongp\Desktop\algorithm_cpp\ConsoleApplication1\Debug\Baek6593.exe
-  Baek6593.vcxproj -> C:\Users\dongp\Desktop\algorithm_cpp\ConsoleApplication1\Debug\Baek6593.pdb (Full PDB)
