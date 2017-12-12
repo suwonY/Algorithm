@@ -1,10 +1,10 @@
 public class ListQueue {
 	private class Node{
-		private Object data;
+		private Object obj;
 		private Node nextNode;
 		
-		Node(Object data){
-			this.data = data;
+		private Node(Object obj){
+			this.obj = obj;
 			this.nextNode = null;
 		}
 	}
@@ -19,30 +19,28 @@ public class ListQueue {
 	public void add(Object obj){
 		Node node = new Node(obj);
 		node.nextNode = null;
-		if(isEmpty()){ //첫 노드면
+		if(isEmpty()){
 			rear = node;
 			front = node;
 		}
-		else{ //뒤에 삽입된 노드면
+		else{
 			rear.nextNode = node;
 			rear = node;
 		}
 	}
 	
 	public Object peek(){
-		return front.data;
+		return front.obj;
 	}
 	
 	public Object remove(){
-		Object obj = front.data;
+		Object obj = front.obj;
 		front = front.nextNode;
 		if(front==null) rear = null;
-		
 		return obj;
 	}
 	
 	public boolean isEmpty(){
 		return front==null;
 	}
-	
 }
