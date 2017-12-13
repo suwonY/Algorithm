@@ -1,13 +1,13 @@
-public class ObjectList {
+public class make_ArrayList {
 	private Object[] objs;
 	private int index;
 	private int capacity, amount;
 
-	public ObjectList() { // 기본 생성자 10크기
+	public make_ArrayList() { // 기본 생성자 10크기
 		this(10, 10);
 	}
 
-	public ObjectList(int capacity, int amount) { // 배열크기와 늘릴크기 정하기
+	public make_ArrayList(int capacity, int amount) { // 배열크기와 늘릴크기 정하기
 		this.capacity = capacity;
 		this.amount = amount;
 		objs = new Object[capacity];
